@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Love Card — For My GF</title>
+  <style>
+    :root{
+      --bg:#0f1022;
+      --card:#191830;
+      --pink:#ff6b9a;
+      --soft:#ffd6e8;
+      --glass: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;background: radial-gradient(ellipse at 10% 10%, #1a1a2e 0%, var(--bg) 40%, #06060a 100%);color:white;}
+
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px}
+
+    .card{
+      width:360px;max-width:95%;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:20px;padding:26px;position:relative;overflow:hidden;box-shadow: 0 10px 30px rgba(5,6,10,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* floating hearts background */
+    .hearts{position:absolute;inset:0;pointer-events:none}
+    .heart{
+      position:absolute;left:50%;top:50%;width:18px;height:18px;transform-origin:center;opacity:0;mix-blend-mode:screen;
+    }
+    .heart svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.35));}
+
+    /* header */
+    .card-header{display:flex;align-items:center;gap:12px}
+    .avatar{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--pink),#ff9bb8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;box-shadow:0 6px 18px rgba(255,107,154,0.18)}
+    .title{line-height:1}
+    .title h1{font-size:18px;margin:0}
+    .title p{margin:0;font-size:13px;color:#f6cddf}
+
+    /* message area */
+    .message{margin-top:18px;background:var(--glass);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .message p{margin:0;font-size:15px;color:#ffeef6}
+
+    /* animated heart */
+    .big-heart{display:flex;align-items:center;justify-content:center;margin:18px 0}
+    .big-heart svg{width:120px;height:120px;transform-origin:center;animation:pulse 1.2s infinite cubic-bezier(.25,.8,.25,1)}
+    @keyframes pulse{
+      0%{transform:scale(1);filter:drop-shadow(0 8px 24px rgba(255,107,154,0.14))}
+      50%{transform:scale(1.08)}
+      100%{transform:scale(1)}
+    }
+
+    /* typing message */
+    .typed{font-family:inherit;font-size:16px;color:var(--soft);height:56px;display:flex;align-items:center}
+    .typed .cursor{width:2px;height:20px;background:var(--soft);margin-left:6px;animation:blink 1s steps(2) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* buttons */
+    .actions{display:flex;gap:10px;margin-top:14px}
+    .btn{flex:1;padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(180deg,var(--pink),#ff4f81);color:white;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(255,107,154,0.12);transition:transform .15s ease, box-shadow .15s}
+    .btn:active{transform:translateY(2px)}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#ffd6e8}
+
+    /* confetti hearts — simple particles */
+    .particles{position:absolute;inset:0;pointer-events:none}
+
+    /* footer */
+    .footer{margin-top:12px;font-size:12px;color:#f6cddf;text-align:center}
+
+    /* responsive */
+    @media (max-width:420px){.big-heart svg{width:96px;height:96px}.avatar{width:56px;height:56px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="card">
+
+      <div class="hearts" id="hearts"></div>
+      <div class="particles" id="particles"></div>
+
+      <div class="card-header">
+        <div class="avatar">❤</div>
+        <div class="title">
+          <h1>For my love</h1>
+          <p>Every beat is for you 💕</p>
+        </div>
+      </div>
+
+      <div class="message">
+        <p>Hey love — I made this little card just for you. Tap the heart and watch some love float up. You're my favorite person in the world.</p>
+      </div>
+
+      <div class="big-heart">
+        <button id="heartBtn" aria-label="Send love" style="background:none;border:0;padding:0;cursor:pointer">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.2-4.8-9.2-7.2C-0.5 9 3.3 4 7.3 6.1 9 7.2 10 9 12 11c2-2 3-3.8 4.7-4.9 4-2.1 7.8 2.9 4.5 7.7C19.2 16.2 12 21 12 21z" fill="url(#g)"/>
+            <defs>
+              <linearGradient id="g" x1="0" x2="1">
+                <stop offset="0" stop-color="#ff8fb3"/>
+                <stop offset="1" stop-color="#ff4f81"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </button>
+      </div>
+
+      <div class="typed" id="typed">
+        <span id="messageText"></span><span class="cursor"></span>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="surpriseBtn">Surprise me</button>
+        <button class="btn ghost" id="resetBtn">Reset</button>
+      </div>
+
+      <div class="footer">Made with ❤️ — Press the heart or "Surprise me"</div>
+    </div>
+  </div>
+
+  <script>
+    // small utility
+    function rand(min,max){return Math.random()*(max-min)+min}
+
+    // create floating hearts in background
+    const heartsLayer = document.getElementById('hearts');
+    function spawnHeart(x,y,size,delay,ttl){
+      const el = document.createElement('div');el.className='heart';
+      el.style.left = (x*100)+'%';
+      el.style.top = (y*100)+'%';
+      el.style.width = size+'px';el.style.height = size+'px';
+      const hue = Math.round(rand(320,350));
+      el.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.8-9.2-7.2C-0.5 9 3.3 4 7.3 6.1 9 7.2 10 9 12 11c2-2 3-3.8 4.7-4.9 4-2.1 7.8 2.9 4.5 7.7C19.2 16.2 12 21 12 21z" fill="hsl(${hue} 100% 70%)"/></svg>`;
+      heartsLayer.appendChild(el);
+      // animate with JS (simple)
+      const startX = x*window.innerWidth;
+      const endY = -50;
+      el.animate([
+        { transform: `translateY(0px) scale(0.9)`, opacity: 0, offset: 0 },
+        { transform: `translateY(-${rand(120,260)}px) scale(1)`, opacity: 1, offset: .2 },
+        { transform: `translateY(-${rand(300,700)}px) scale(0.6)`, opacity: 0, offset: 1 }
+      ], {duration: ttl, easing: 'cubic-bezier(.2,.7,.2,1)', delay: delay});
+
+      setTimeout(()=>el.remove(), ttl+500);
+    }
+
+    // spawn some background hearts slowly
+    setInterval(()=>{
+      const x=rand(0.05,0.95), y=rand(0.7,0.95), size=rand(12,28), delay=0, ttl=rand(3000,7000);
+      spawnHeart(x,y,size,delay,ttl);
+    }, 600);
+
+    // particle confetti (small hearts) when clicking
+    const particles = document.getElementById('particles');
+    function burst(x, y, count=18){
+      for(let i=0;i<count;i++){
+        const p = document.createElement('div');p.style.position='absolute';p.style.left=(x-12)+'px';p.style.top=(y-12)+'px';p.style.pointerEvents='none';
+        const s = Math.round(rand(8,18));
+        p.innerHTML = `<svg viewBox="0 0 24 24" style="width:${s}px;height:${s}px"><path d=\"M12 21s-7.2-4.8-9.2-7.2C-0.5 9 3.3 4 7.3 6.1 9 7.2 10 9 12 11c2-2 3-3.8 4.7-4.9 4-2.1 7.8 2.9 4.5 7.7C19.2 16.2 12 21 12 21z\" fill=\"hsl(${Math.round(rand(330,350))} 100% ${Math.round(rand(60,75))}% )\"/></svg>`;
+        particles.appendChild(p);
+        const angle = rand(0, Math.PI*2); const dist = rand(40,220);
+        const dx = Math.cos(angle)*dist; const dy = Math.sin(angle)*dist - rand(20,100);
+        p.animate([
+          { transform: 'translate3d(0,0,0) rotate(0deg)', opacity:1 },
+          { transform: `translate3d(${dx}px, ${dy}px, 0) rotate(${rand(100,720)}deg)`, opacity:0 }
+        ], {duration: rand(700,1400), easing:'cubic-bezier(.2,.7,.2,1)'});
+        setTimeout(()=>p.remove(), 1600);
+      }
+    }
+
+    // typed message animation
+    const messages = [
+      "I love you more than words can say.",
+      "You make my days brighter.",
+      "Forever yours, always.",
+      "Thank you for being you."
+    ];
+    const messageText = document.getElementById('messageText');
+    let msgIndex = 0;
+    function typeMessage(text, cb){
+      messageText.textContent = '';
+      let i=0;
+      const t = setInterval(()=>{
+        messageText.textContent += text[i]||'';
+        i++;
+        if(i>text.length){clearInterval(t);setTimeout(()=>cb && cb(), 800)}
+      }, 45);
+    }
+
+    // heart click
+    const heartBtn = document.getElementById('heartBtn');
+    heartBtn.addEventListener('click', (e)=>{
+      const rect = e.target.getBoundingClientRect();
+      const x = rect.left + rect.width/2;
+      const y = rect.top + rect.height/2;
+      burst(x, y, 22);
+      // small pulse (scale) effect
+      const svg = heartBtn.querySelector('svg');
+      svg.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:380,easing:'cubic-bezier(.2,.9,.3,1)'});
+    });
+
+    // Surprise button => cycle message + burst
+    const surpriseBtn = document.getElementById('surpriseBtn');
+    surpriseBtn.addEventListener('click', ()=>{
+      typeMessage(messages[msgIndex], ()=>{});
+      msgIndex = (msgIndex+1)%messages.length;
+      // spawn many hearts across card
+      for(let i=0;i<12;i++) spawnHeart(rand(0.05,0.95), rand(0.2,0.95), rand(10,26), rand(0,140), rand(1400,2800));
+      // center burst
+      const c = document.getElementById('card').getBoundingClientRect();
+      burst(c.left + c.width/2, c.top + c.height/2, 28);
+    });
+
+    // reset button
+    const resetBtn = document.getElementById('resetBtn');
+    resetBtn.addEventListener('click', ()=>{ messageText.textContent=''; msgIndex=0; });
+
+    // start with first message
+    typeMessage(messages[0]);
+
+    // small accessibility: spacebar or enter triggers surprise
+    document.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ surpriseBtn.click(); e.preventDefault(); } });
+  </script>
+</body>
+</html>
